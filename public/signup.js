@@ -1,15 +1,19 @@
-const form = document.getElementById("signupForm");
+const form = document.querySelector("form");
 
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const fullName = document.getElementById("fullName").value.trim();
-    const username = document.getElementById("username").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
+    const fullName = form.querySelector('input[type="text"]').value.trim();
 
-    if (!fullName || !username || !email || !password) {
-        alert("Please fill all fields.");
+    const username = form.querySelector("#username")
+        ? form.querySelector("#username").value.trim()
+        : "";
+
+    const email = form.querySelector('input[type="email"]').value.trim();
+    const password = form.querySelector('input[type="password"]').value;
+
+    if (!fullName || !email || !password) {
+        alert("Please fill all required fields.");
         return;
     }
 
@@ -29,15 +33,17 @@ form.addEventListener("submit", async (e) => {
 
         const data = await response.json();
 
-        if (response.ok) {
-            alert("✅ Account Created Successfully");
-            window.location.href = "index.html";
-        } else {
+        if (!response.ok) {
             alert(data.message);
+            return;
         }
+
+        alert("Account created successfully!");
+
+        window.location.href = "index.html";
 
     } catch (error) {
         console.error(error);
-        alert("❌ Server Error");
+        alert("Server Error");
     }
 });

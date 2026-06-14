@@ -1,11 +1,16 @@
-const form = document.getElementById("loginForm");
+const form = document.querySelector("form");
 
 form.addEventListener("submit", async (e) => {
 
     e.preventDefault();
 
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
+    const email = form.querySelector('input[type="email"]').value.trim();
+    const password = form.querySelector('input[type="password"]').value;
+
+    if (!email || !password) {
+        alert("Please fill all fields");
+        return;
+    }
 
     try {
 
@@ -26,26 +31,29 @@ form.addEventListener("submit", async (e) => {
 
         const data = await response.json();
 
-        if (response.ok) {
-
-            localStorage.setItem("token", data.token);
-            localStorage.setItem("currentUser", JSON.stringify(data.user));
-
-            alert("✅ Login Successful");
-
-            window.location.href = "chat.html";
-
-        } else {
+        if (!response.ok) {
 
             alert(data.message);
 
+            return;
+
         }
 
-    } catch (error) {
+        // Save JWT
+        localStorage.setItem("token", data.token);
 
-        console.error(error);
+        // Save Logged In User
+        localStorage.setItem("currentUser", JSON.stringify(data.user));
 
-        alert("❌ Server Error");
+        alert("Login Successful");
+
+        window.location.href = "chat.html";
+
+    } catch (err) {
+
+        console.error(err);
+
+        alert("Server Error");
 
     }
 
